@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Custom Corner — Make It Yours.{% endblock %}</title>
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500..700;1,500..700&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..600,0..1,-50..200" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        surface: '#FAF8F5',
+        'surface-dim': '#e3d8cd',
+        'surface-container-lowest': '#FFFFFF',
+        'surface-container-low': '#FDFBF8',
+        'surface-container': '#F4EFEA',
+        'surface-container-high': '#F1E6DB',
+        'surface-container-highest': '#ECE1D6',
+        'on-surface': '#201b14',
+        'on-surface-variant': '#4d4540',
+        primary: '#2B2623',
+        'on-primary': '#FAF8F5',
+        'primary-container': '#3F3834',
+        secondary: '#78583a',
+        'on-secondary': '#ffffff',
+        'secondary-container': '#fed2ac',
+        'on-secondary-container': '#5e4124',
+        tertiary: '#586B5A',
+        'on-tertiary': '#ffffff',
+        'tertiary-container': '#d3e8d3',
+        'on-tertiary-container': '#1a2b1d',
+        outline: '#7f7570',
+        'outline-variant': '#d0c4be',
+        error: '#ba1a1a',
+        'on-error': '#ffffff',
+        'error-container': '#ffdad6',
+        'on-error-container': '#93000a',
+      },
+      fontFamily: {
+        display: ['Playfair Display', 'serif'],
+        body: ['Plus Jakarta Sans', 'sans-serif'],
+      },
+      borderRadius: { sm: '0.25rem', DEFAULT: '0.25rem', md: '0.375rem', lg: '0.5rem', xl: '0.75rem' },
+    }
+  }
+}
+</script>
+<style>
+  html,body{margin:0;padding:0;}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-thumb{background:#d0c4be;border-radius:8px;}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; font-size:20px; vertical-align:middle; line-height:1;}
+  .price{ font-variant-numeric: tabular-nums; }
+</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body class="bg-surface font-body text-on-surface min-h-screen flex flex-col antialiased">
+
+{% include 'partials/header.html' %}
+
+<div class="pt-[104px] flex-1 flex flex-col w-full">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="flash-container" class="max-w-[1320px] w-full mx-auto px-5 lg:px-10 pt-4 space-y-2">
+      {% for category, message in messages %}
+        <div class="flash-msg flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold
+          {% if category == 'error' %} bg-error-container text-on-error-container
+          {% elif category == 'success' %} bg-tertiary-container text-on-tertiary-container
+          {% else %} bg-secondary-container text-on-secondary-container {% endif %}">
+          <span class="material-symbols-outlined text-[18px]">
+            {% if category == 'error' %}error{% elif category == 'success' %}check_circle{% else %}info{% endif %}
+          </span>
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="flex-1 w-full flex flex-col">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+{% include 'partials/footer.html' %}
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

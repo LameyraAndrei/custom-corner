@@ -1,0 +1,63 @@
+<div class="fixed top-0 left-0 right-0 z-50">
+  <div class="bg-primary text-on-primary py-2 px-5 lg:px-10 text-center text-[11px] font-bold uppercase tracking-widest">
+    <div class="max-w-[1320px] mx-auto flex items-center justify-center gap-2 flex-wrap">
+      <span>Free shipping across Metro Manila on orders over ₱1,500</span>
+      <span class="opacity-40 hidden sm:inline">|</span>
+      <span class="hidden sm:inline">Turnaround: 2-4 business days</span>
+    </div>
+  </div>
+  <header class="w-full bg-surface/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(43,38,35,0.06)]">
+    <div class="h-16 max-w-[1320px] mx-auto px-5 lg:px-10 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-8">
+        <a class="flex items-center gap-2.5" href="{{ url_for('main.home') }}">
+          <img alt="Custom Corner Logo" class="h-7 w-auto object-contain" src="{{ url_for('static', filename='images/logo.png') }}">
+          <span class="font-display font-semibold text-lg text-primary tracking-tight hidden sm:inline">Custom Corner</span>
+        </a>
+        <nav class="hidden xl:flex items-center gap-6">
+          <a class="text-sm font-semibold {{ 'text-primary' if request.endpoint == 'main.home' else 'text-on-surface-variant hover:text-on-surface' }} transition-colors" href="{{ url_for('main.home') }}">Home</a>
+          <a class="text-sm font-semibold {{ 'text-primary' if request.endpoint == 'shop.catalog' else 'text-on-surface-variant hover:text-on-surface' }} transition-colors" href="{{ url_for('shop.catalog') }}">Shop</a>
+          <a class="text-sm font-semibold {{ 'text-primary' if request.endpoint == 'customizer.studio' else 'text-on-surface-variant hover:text-on-surface' }} transition-colors" href="{{ url_for('shop.catalog') }}#customize">Customize</a>
+          <a class="text-sm font-semibold {{ 'text-primary' if request.endpoint == 'main.how_it_works' else 'text-on-surface-variant hover:text-on-surface' }} transition-colors" href="{{ url_for('main.how_it_works') }}">How It Works</a>
+          <a class="text-sm font-semibold {{ 'text-primary' if request.endpoint == 'main.about' else 'text-on-surface-variant hover:text-on-surface' }} transition-colors" href="{{ url_for('main.about') }}">About</a>
+        </nav>
+      </div>
+      <div class="flex items-center gap-3">
+        <form action="{{ url_for('shop.catalog') }}" method="get" class="hidden md:flex items-center bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant/50 focus-within:border-primary transition-colors">
+          <span class="material-symbols-outlined text-[17px] mr-1.5 text-outline">search</span>
+          <input name="q" class="bg-transparent text-sm text-on-surface placeholder:text-outline focus:outline-none w-40 lg:w-52" placeholder="Search bespoke goods..." type="text" value="{{ request.args.get('q','') }}">
+        </form>
+        <a class="relative flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-colors text-on-surface" href="{{ url_for('cart.view_cart') }}">
+          <span class="material-symbols-outlined text-[19px] text-primary">shopping_bag</span>
+          <div class="hidden sm:flex flex-col text-left leading-none">
+            <span class="text-[10px] uppercase tracking-wide text-on-surface-variant">{{ cart_count }} item{{ 's' if cart_count != 1 else '' }}</span>
+            <span class="text-[13px] font-bold text-primary price">{{ cart_total|peso }}</span>
+          </div>
+        </a>
+        <div class="h-6 w-px bg-outline-variant/50 hidden sm:block"></div>
+        {% if current_user %}
+        <div class="relative group">
+          <a class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-surface-container-low transition-colors" href="{{ url_for('account.dashboard') }}">
+            <span class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-sm">{{ current_user.name[0]|upper }}</span>
+            <span class="hidden lg:block text-sm font-semibold text-on-surface">{{ current_user.name.split(' ')[0] }}</span>
+          </a>
+          <div class="absolute right-0 top-full pt-1 hidden group-hover:block z-50 w-48">
+            <div class="bg-surface-container-lowest border border-outline-variant/50 rounded-lg shadow-lg py-1.5">
+              <a href="{{ url_for('account.dashboard') }}" class="block px-4 py-2 text-sm hover:bg-surface-container-low">My Account</a>
+              <a href="{{ url_for('account.orders') }}" class="block px-4 py-2 text-sm hover:bg-surface-container-low">My Orders</a>
+              <a href="{{ url_for('account.designs') }}" class="block px-4 py-2 text-sm hover:bg-surface-container-low">Saved Designs</a>
+              {% if current_user.is_admin %}
+              <a href="{{ url_for('admin.dashboard') }}" class="block px-4 py-2 text-sm hover:bg-surface-container-low text-secondary font-semibold">Admin Dashboard</a>
+              {% endif %}
+              <div class="h-px bg-outline-variant/40 my-1"></div>
+              <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm hover:bg-surface-container-low text-error">Log Out</a>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <a href="{{ url_for('auth.login') }}" class="text-sm font-semibold px-3 py-1.5 rounded-lg hover:bg-surface-container-low text-on-surface">Log In</a>
+        <a href="{{ url_for('auth.register') }}" class="text-sm font-semibold px-3.5 py-1.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-colors">Sign Up</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+</div>

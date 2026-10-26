@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Edit' if mode == 'edit' else 'New' }} Product — Custom Corner Admin{% endblock %}
+{% block content %}
+<section class="w-full py-10">
+  <div class="max-w-[1320px] mx-auto px-5 lg:px-10 flex flex-col lg:flex-row gap-8">
+    {% include 'partials/admin_nav.html' %}
+    <div class="flex-1 min-w-0 max-w-xl">
+      <a href="{{ url_for('admin.products') }}" class="text-sm font-semibold text-on-surface-variant hover:text-primary flex items-center gap-1 mb-4">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span> Products
+      </a>
+      <h1 class="font-display text-2xl font-semibold text-primary tracking-tight mb-6">{{ 'Edit Product' if mode == 'edit' else 'Add New Product' }}</h1>
+
+      <form method="post" class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6 space-y-4">
+        <div>
+          <label class="text-xs text-on-surface-variant block mb-1">Product Name *</label>
+          <input name="name" required value="{{ product.name if product else '' }}" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+        </div>
+        {% if mode == 'new' %}
+        <div>
+          <label class="text-xs text-on-surface-variant block mb-1">URL Slug *</label>
+          <input name="slug" required placeholder="e.g. custom-hoodie" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-on-surface-variant block mb-1">Mockup Shape (customizer)</label>
+          <select name="mockup_shape" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none">
+            <option value="tshirt">T-Shirt</option>
+            <option value="mug">Mug</option>
+            <option value="tote">Tote Bag</option>
+            <option value="keychain">Keychain</option>
+            <option value="sticker">Sticker</option>
+            <option value="phonecase">Phone Case</option>
+          </select>
+        </div>
+        {% endif %}
+        <div>
+          <label class="text-xs text-on-surface-variant block mb-1">Category *</label>
+          <select name="category_id" required class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none">
+            {% for c in categories %}
+            <option value="{{ c.id }}" {{ 'selected' if product and product.category_id == c.id }}>{{ c.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-on-surface-variant block mb-1">Description</label>
+          <textarea name="description" rows="3" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">{{ product.description if product else '' }}</textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs text-on-surface-variant block mb-1">Base Price (₱) *</label>
+            <input type="number" step="0.01" name="base_price" required value="{{ product.base_price if product else '' }}" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+          </div>
+          <div>
+            <label class="text-xs text-on-surface-variant block mb-1">Stock *</label>
+            <input type="number" name="stock" required value="{{ product.stock if product else '' }}" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+          </div>
+        </div>
+        {% if mode == 'edit' %}
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="is_active" {{ 'checked' if product.is_active }} class="accent-primary"> Product is active (visible in shop)
+        </label>
+        {% endif %}
+        <button type="submit" class="w-full bg-primary text-on-primary font-semibold py-3 rounded-lg hover:bg-primary-container transition-colors">
+          {{ 'Save Changes' if mode == 'edit' else 'Create Product' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Not Found — Custom Corner{% endblock %}
+{% block content %}
+<div class="flex-1 flex flex-col items-center justify-center text-center py-24 px-5">
+  <span class="material-symbols-outlined text-6xl text-outline mb-4">search_off</span>
+  <h1 class="font-display text-3xl font-semibold text-primary mb-2">Page not found</h1>
+  <p class="text-on-surface-variant mb-6">We couldn't find what you were looking for.</p>
+  <a href="{{ url_for('main.home') }}" class="px-6 py-3 rounded-lg bg-primary text-on-primary font-semibold hover:bg-primary-container transition-colors">Back to Home</a>
+</div>
+{% endblock %}

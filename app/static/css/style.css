@@ -1,0 +1,26 @@
+/* Small supplemental styles beyond Tailwind utility classes */
+
+.font-display { font-family: "Playfair Display", serif; }
+.font-body { font-family: "Plus Jakarta Sans", sans-serif; }
+
+input[type="range"] { height: 4px; }
+
+.btn-primary {
+  background-color: #2B2623;
+  color: #FAF8F5;
+}
+.btn-primary:hover { background-color: #3F3834; }
+
+@media (max-width: 1023px) {
+  #design-canvas { width: 100%; height: auto; }
+}
+
+.step-dot {
+  width: 16px; height: 16px; border-radius: 9999px;
+  border: 3px solid #d0c4be; background: #fff;
+}
+.step-dot.done { border-color: #586B5A; background: #586B5A; }
+.step-dot.current { border-color: #78583a; background: #78583a; box-shadow: 0 0 0 4px rgba(120,88,58,0.15); }
+
+.step-line { flex: 1; height: 3px; background: #d0c4be; }
+.step-line.done { background: #586B5A; }

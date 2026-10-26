@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Order Confirmed — Custom Corner{% endblock %}
+{% block content %}
+<section class="w-full py-14">
+  <div class="max-w-[800px] mx-auto px-5 lg:px-10 text-center">
+    <span class="material-symbols-outlined text-tertiary text-6xl mb-4" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+    <h1 class="font-display text-3xl font-semibold text-primary tracking-tight mb-2">Thank you, {{ order.full_name.split(' ')[0] }}!</h1>
+    <p class="text-on-surface-variant mb-1">Your order has been placed successfully.</p>
+    <p class="text-sm text-on-surface-variant mb-8">Order number: <span class="font-mono font-semibold text-on-surface">{{ order.order_number }}</span></p>
+
+    <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6 text-left mb-6">
+      {% for item in items %}
+      <div class="flex items-center gap-3 py-3 {% if not loop.last %}border-b border-outline-variant/30{% endif %}">
+        <div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+          {% if item.preview_image %}<img src="{{ url_for('static', filename=item.preview_image) }}" class="w-full h-full object-cover">{% endif %}
+        </div>
+        <div class="flex-1">
+          <p class="font-medium text-sm">{{ item.product_name }}</p>
+          <p class="text-xs text-on-surface-variant">{{ item.color }} {% if item.size %}&middot; {{ item.size }}{% endif %} &middot; Qty {{ item.quantity }}</p>
+        </div>
+        <span class="font-semibold text-sm price">{{ ((item.unit_price + item.customization_fee) * item.quantity)|peso }}</span>
+      </div>
+      {% endfor %}
+      <div class="pt-4 space-y-1.5 text-sm">
+        <div class="flex justify-between"><span class="text-on-surface-variant">Subtotal</span><span class="price">{{ order.subtotal|peso }}</span></div>
+        <div class="flex justify-between"><span class="text-on-surface-variant">Delivery ({{ order.delivery_option }})</span><span class="price">{{ order.delivery_fee|peso }}</span></div>
+        <div class="flex justify-between font-bold text-base pt-1.5 border-t border-outline-variant/30"><span>Total</span><span class="text-primary price">{{ order.total|peso }}</span></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 text-left mb-8 text-sm">
+      <div class="bg-surface-container-low rounded-lg p-4">
+        <span class="text-xs text-on-surface-variant uppercase tracking-wide block mb-1">Shipping To</span>
+        <p class="font-medium">{{ order.full_name }}</p>
+        <p class="text-on-surface-variant">{{ order.address_line }}, {{ order.city }}, {{ order.province }} {{ order.postal_code }}</p>
+      </div>
+      <div class="bg-surface-container-low rounded-lg p-4">
+        <span class="text-xs text-on-surface-variant uppercase tracking-wide block mb-1">Payment Method</span>
+        <p class="font-medium">{{ order.payment_method }}</p>
+        <span class="text-xs text-on-surface-variant uppercase tracking-wide block mb-1 mt-2">Status</span>
+        <p class="font-medium text-secondary">{{ order.status }}</p>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a href="{{ url_for('orders.track', order_id=order.id) }}" class="px-6 py-3 rounded-lg bg-primary text-on-primary font-semibold hover:bg-primary-container transition-colors">Track My Order</a>
+      <a href="{{ url_for('shop.catalog') }}" class="px-6 py-3 rounded-lg border border-outline-variant text-on-surface font-semibold hover:bg-surface-container-low transition-colors">Continue Shopping</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

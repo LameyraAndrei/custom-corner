@@ -1,0 +1,15 @@
+<div class="flex items-center gap-1 border-b border-outline-variant/40 overflow-x-auto">
+  {% set tabs = [
+    ('account.dashboard', 'Overview'),
+    ('account.profile', 'Profile'),
+    ('account.orders', 'My Orders'),
+    ('account.designs', 'Saved Designs'),
+    ('account.addresses', 'Addresses'),
+  ] %}
+  {% for endpoint, label in tabs %}
+  <a href="{{ url_for(endpoint) }}" class="px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors
+    {{ 'border-primary text-primary' if request.endpoint == endpoint else 'border-transparent text-on-surface-variant hover:text-on-surface' }}">
+    {{ label }}
+  </a>
+  {% endfor %}
+</div>

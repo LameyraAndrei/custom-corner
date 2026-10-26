@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Settings — Custom Corner Admin{% endblock %}
+{% block content %}
+<section class="w-full py-10">
+  <div class="max-w-[1320px] mx-auto px-5 lg:px-10 flex flex-col lg:flex-row gap-8">
+    {% include 'partials/admin_nav.html' %}
+    <div class="flex-1 min-w-0 max-w-xl">
+      <h1 class="font-display text-2xl font-semibold text-primary tracking-tight mb-6">Settings</h1>
+      <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6 space-y-4">
+        <div>
+          <span class="text-xs text-on-surface-variant uppercase tracking-wide block mb-1">Store Name</span>
+          <p class="text-sm font-medium">Custom Corner</p>
+        </div>
+        <div>
+          <span class="text-xs text-on-surface-variant uppercase tracking-wide block mb-1">Currency</span>
+          <p class="text-sm font-medium">Philippine Peso (₱)</p>
+        </div>
+        <div>
+          <span class="text-xs text-on-surface-variant uppercase tracking-wide block mb-1">Standard Delivery Fee</span>
+          <p class="text-sm font-medium">₱80.00</p>
+        </div>
+        <div>
+          <span class="text-xs text-on-surface-variant uppercase tracking-wide block mb-1">Express Delivery Fee</span>
+          <p class="text-sm font-medium">₱180.00</p>
+        </div>
+        <div>
+          <span class="text-xs text-on-surface-variant uppercase tracking-wide block mb-1">Free Shipping Threshold</span>
+          <p class="text-sm font-medium">₱1,500.00</p>
+        </div>
+        <p class="text-xs text-on-surface-variant pt-2 border-t border-outline-variant/30">Store settings are configured in <code class="bg-surface-container-high px-1.5 py-0.5 rounded">app/config.py</code> for this version of the project.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} — Custom Corner{% endblock %}
+{% block content %}
+<section class="w-full py-8 lg:py-12">
+  <div class="max-w-[1320px] mx-auto px-5 lg:px-10">
+    <div class="text-xs text-on-surface-variant mb-6 flex items-center gap-1.5">
+      <a href="{{ url_for('main.home') }}" class="hover:text-primary">Home</a> <span>/</span>
+      <a href="{{ url_for('shop.catalog') }}" class="hover:text-primary">Shop</a> <span>/</span>
+      <a href="{{ url_for('shop.catalog', category=product.category_slug) }}" class="hover:text-primary">{{ product.category_name }}</a> <span>/</span>
+      <span class="text-on-surface font-medium">{{ product.name }}</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
+      <div class="rounded-xl overflow-hidden bg-surface-container-low border border-outline-variant/30 aspect-square">
+        <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs uppercase tracking-widest text-secondary font-bold mb-2">{{ product.category_name }}</span>
+        <h1 class="font-display text-3xl lg:text-4xl font-semibold text-primary tracking-tight mb-3">{{ product.name }}</h1>
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-2xl font-bold text-primary price">{{ product.base_price|peso }}</span>
+          <span class="text-xs text-on-surface-variant">+ customization from {{ product.customization_fee|peso }}</span>
+        </div>
+        <p class="text-sm text-on-surface-variant leading-relaxed mb-6">{{ product.description }}</p>
+
+        <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+          <div><span class="block text-xs text-on-surface-variant uppercase tracking-wide mb-1">Material</span><span class="font-medium text-on-surface">{{ product.material }}</span></div>
+          <div><span class="block text-xs text-on-surface-variant uppercase tracking-wide mb-1">Production Time</span><span class="font-medium text-on-surface">{{ product.production_time }}</span></div>
+          <div><span class="block text-xs text-on-surface-variant uppercase tracking-wide mb-1">Availability</span>
+            {% if product.stock > 20 %}<span class="font-medium text-tertiary">In Stock</span>
+            {% elif product.stock > 0 %}<span class="font-medium text-secondary">Low Stock ({{ product.stock }} left)</span>
+            {% else %}<span class="font-medium text-error">Out of Stock</span>{% endif %}
+          </div>
+        </div>
+
+        {% if colors %}
+        <div class="mb-5">
+          <span class="block text-xs text-on-surface-variant uppercase tracking-wide mb-2">Available Colors</span>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            {% for c in colors %}
+            <div class="flex flex-col items-center gap-1" title="{{ c.name }}">
+              <span class="w-8 h-8 rounded-full border-2 border-outline-variant" style="background-color: {{ c.hex }};"></span>
+              <span class="text-[10px] text-on-surface-variant">{{ c.name }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if sizes %}
+        <div class="mb-6">
+          <span class="block text-xs text-on-surface-variant uppercase tracking-wide mb-2">Available Sizes</span>
+          <div class="flex items-center gap-2 flex-wrap">
+            {% for s in sizes %}
+            <span class="px-3 py-1.5 rounded-lg border border-outline-variant text-sm font-medium text-on-surface">{{ s.name }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="flex flex-col sm:flex-row gap-3 mt-auto pt-4">
+          {% if product.stock > 0 %}
+          <a href="{{ url_for('customizer.studio', slug=product.slug) }}" class="flex-1 inline-flex items-center justify-center gap-2 bg-primary text-on-primary text-sm font-semibold px-6 py-3.5 rounded-lg hover:bg-primary-container transition-all">
+            <span class="material-symbols-outlined text-[18px]">palette</span> Customize This Product
+          </a>
+          {% else %}
+          <button disabled class="flex-1 inline-flex items-center justify-center gap-2 bg-surface-container-high text-on-surface-variant text-sm font-semibold px-6 py-3.5 rounded-lg cursor-not-allowed">
+            Out of Stock
+          </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if related %}
+    <div class="mt-16 pt-10 border-t border-outline-variant/30">
+      <h2 class="font-display text-2xl font-semibold text-primary mb-6">You May Also Like</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+        {% for p in related %}{% include 'partials/product_card.html' %}{% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

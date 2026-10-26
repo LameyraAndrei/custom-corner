@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Manage Products — Custom Corner{% endblock %}
+{% block content %}
+<section class="w-full py-10">
+  <div class="max-w-[1320px] mx-auto px-5 lg:px-10 flex flex-col lg:flex-row gap-8">
+    {% include 'partials/admin_nav.html' %}
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="font-display text-2xl font-semibold text-primary tracking-tight">Products</h1>
+        <a href="{{ url_for('admin.new_product') }}" class="inline-flex items-center gap-1.5 bg-primary text-on-primary text-sm font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-container transition-colors">
+          <span class="material-symbols-outlined text-[18px]">add</span> Add Product
+        </a>
+      </div>
+      <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="text-left text-xs uppercase tracking-wide text-on-surface-variant border-b border-outline-variant/30">
+            <th class="py-3 px-4">Product</th><th class="py-3 px-4">Category</th><th class="py-3 px-4">Price</th><th class="py-3 px-4">Stock</th><th class="py-3 px-4">Status</th><th class="py-3 px-4"></th>
+          </tr></thead>
+          <tbody>
+            {% for p in products %}
+            <tr class="border-b border-outline-variant/20 hover:bg-surface-container-low">
+              <td class="py-3 px-4 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container flex-shrink-0"><img src="{{ url_for('static', filename='images/' + p.image) }}" class="w-full h-full object-cover"></div>
+                <span class="font-medium">{{ p.name }}</span>
+              </td>
+              <td class="py-3 px-4 text-on-surface-variant">{{ p.category_name }}</td>
+              <td class="py-3 px-4 font-semibold price">{{ p.base_price|peso }}</td>
+              <td class="py-3 px-4">{{ p.stock }}</td>
+              <td class="py-3 px-4">
+                {% if p.is_active %}<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-tertiary-container text-on-tertiary-container">Active</span>
+                {% else %}<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-surface-container-high text-on-surface-variant">Disabled</span>{% endif %}
+              </td>
+              <td class="py-3 px-4 text-right space-x-2 whitespace-nowrap">
+                <a href="{{ url_for('admin.edit_product', product_id=p.id) }}" class="text-primary font-semibold hover:underline">Edit</a>
+                {% if p.is_active %}
+                <form method="post" action="{{ url_for('admin.delete_product', product_id=p.id) }}" class="inline" onsubmit="return confirm('Disable this product?');">
+                  <button class="text-error font-semibold hover:underline">Disable</button>
+                </form>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

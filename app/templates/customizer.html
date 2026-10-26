@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% block title %}Customize {{ product.name }} — Custom Corner{% endblock %}
+{% block content %}
+<div class="w-full flex flex-col">
+
+  <div class="border-b border-outline-variant/30 bg-surface-container-lowest">
+    <div class="max-w-[1500px] mx-auto px-5 lg:px-8 py-3 flex items-center justify-between gap-3">
+      <a href="{{ url_for('shop.product_detail', slug=product.slug) }}" class="flex items-center gap-1.5 text-sm font-semibold text-on-surface-variant hover:text-primary">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span> {{ product.name }}
+      </a>
+      <div class="flex items-center gap-2">
+        <button id="btn-save-design" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-outline-variant text-sm font-semibold text-on-surface hover:bg-surface-container-low transition-colors">
+          <span class="material-symbols-outlined text-[17px]">bookmark</span> Save Design
+        </button>
+        <button id="btn-add-to-cart" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-semibold hover:bg-primary-container transition-colors">
+          <span class="material-symbols-outlined text-[17px]">shopping_bag</span> Add to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 grid grid-cols-1 lg:grid-cols-[55%_45%] xl:grid-cols-[58%_42%]">
+
+    <!-- PREVIEW CANVAS -->
+    <div class="bg-surface-container-low flex flex-col items-center py-6 lg:py-10 px-4 lg:sticky lg:top-[104px] lg:h-[calc(100vh-104px)]">
+      {% if product.has_back_side %}
+      <div class="flex items-center gap-1 bg-surface-container-lowest border border-outline-variant/50 rounded-full p-1 mb-5">
+        <button data-side-tab="front" class="side-tab px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-colors bg-primary text-on-primary">Front</button>
+        <button data-side-tab="back" class="side-tab px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-colors text-on-surface-variant">Back</button>
+      </div>
+      {% endif %}
+
+      <div class="relative">
+        <canvas id="design-canvas" width="560" height="560" class="rounded-lg shadow-[0_8px_24px_-4px_rgba(43,38,35,0.12)] bg-white touch-none max-w-[80vw] lg:max-w-[520px]"></canvas>
+      </div>
+
+      <div class="flex items-center gap-2 mt-5 flex-wrap justify-center">
+        <button id="btn-undo" title="Undo" class="tool-btn"><span class="material-symbols-outlined text-[19px]">undo</span></button>
+        <button id="btn-redo" title="Redo" class="tool-btn"><span class="material-symbols-outlined text-[19px]">redo</span></button>
+        <button id="btn-delete-selected" title="Delete selected" class="tool-btn"><span class="material-symbols-outlined text-[19px]">delete</span></button>
+        <button id="btn-reset" title="Reset design" class="tool-btn"><span class="material-symbols-outlined text-[19px]">restart_alt</span></button>
+      </div>
+      <p class="text-xs text-on-surface-variant mt-3 text-center max-w-xs">Click an element to select it, drag to move, use the corner handle to resize and the top handle to rotate.</p>
+    </div>
+
+    <!-- CONTROL RAIL -->
+    <div class="px-5 lg:px-8 py-8 space-y-8 overflow-y-auto lg:h-[calc(100vh-104px)]">
+
+      <div>
+        <h3 class="text-xs font-bold uppercase tracking-wide text-on-surface-variant mb-3">Product Options</h3>
+        {% if colors %}
+        <div class="mb-4">
+          <span class="text-sm font-medium text-on-surface block mb-2">Color: <span id="selected-color-name" class="text-on-surface-variant font-normal">{{ colors[0].name }}</span></span>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            {% for c in colors %}
+            <button type="button" class="color-swatch w-9 h-9 rounded-full border-2 {{ 'border-primary' if loop.first else 'border-outline-variant' }} transition-all" data-color-name="{{ c.name }}" data-color-hex="{{ c.hex }}" style="background-color:{{ c.hex }};" title="{{ c.name }}"></button>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        {% if sizes %}
+        <div class="mb-4">
+          <span class="text-sm font-medium text-on-surface block mb-2">Size</span>
+          <div class="flex items-center gap-2 flex-wrap">
+            {% for s in sizes %}
+            <button type="button" class="size-chip px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors {{ 'border-primary bg-surface text-primary font-bold' if loop.first else 'border-outline-variant text-on-surface' }}" data-size="{{ s.name }}">{{ s.name }}</button>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        <div>
+          <span class="text-sm font-medium text-on-surface block mb-2">Quantity</span>
+          <div class="inline-flex items-center border border-outline-variant rounded-lg">
+            <button id="qty-minus" type="button" class="w-9 h-9 flex items-center justify-center text-on-surface hover:bg-surface-container-low">−</button>
+            <input id="qty-input" type="number" value="1" min="1" max="99" class="w-12 text-center border-x border-outline-variant py-1.5 text-sm focus:outline-none">
+            <button id="qty-plus" type="button" class="w-9 h-9 flex items-center justify-center text-on-surface hover:bg-surface-container-low">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-outline-variant/30 pt-6">
+        <h3 class="text-xs font-bold uppercase tracking-wide text-on-surface-variant mb-3">Add Elements</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <button id="btn-add-text" type="button" class="flex items-center justify-center gap-2 py-3 rounded-lg border border-outline-variant text-sm font-semibold text-on-surface hover:border-secondary hover:bg-surface transition-colors">
+            <span class="material-symbols-outlined text-[18px]">title</span> Add Text
+          </button>
+          <button id="btn-add-image" type="button" class="flex items-center justify-center gap-2 py-3 rounded-lg border border-outline-variant text-sm font-semibold text-on-surface hover:border-secondary hover:bg-surface transition-colors">
+            <span class="material-symbols-outlined text-[18px]">image</span> Upload Image
+          </button>
+          <input type="file" id="image-file-input" accept="image/png,image/jpeg,image/gif,image/webp" class="hidden">
+        </div>
+        <p id="upload-error" class="text-xs text-error mt-2 hidden"></p>
+      </div>
+
+      <!-- SELECTED ELEMENT PROPERTIES -->
+      <div id="element-panel" class="border-t border-outline-variant/30 pt-6 hidden">
+        <h3 class="text-xs font-bold uppercase tracking-wide text-on-surface-variant mb-3">Edit Element</h3>
+        <div id="text-props" class="space-y-3 hidden">
+          <div>
+            <label class="text-xs text-on-surface-variant block mb-1">Text</label>
+            <input id="prop-text" type="text" maxlength="60" class="w-full px-3 py-2 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs text-on-surface-variant block mb-1">Font</label>
+              <select id="prop-font" class="w-full px-2 py-2 rounded-lg border border-outline-variant text-sm focus:outline-none">
+                <option value="Playfair Display">Playfair Display</option>
+                <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Arial">Arial</option>
+                <option value="Courier New">Courier New</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-on-surface-variant block mb-1">Color</label>
+              <input id="prop-color" type="color" value="#2B2623" class="w-full h-9 rounded-lg border border-outline-variant cursor-pointer">
+            </div>
+          </div>
+          <div>
+            <label class="text-xs text-on-surface-variant block mb-1">Size: <span id="prop-size-val">32</span>px</label>
+            <input id="prop-size" type="range" min="10" max="90" value="32" class="w-full accent-primary">
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="prop-bold" type="button" class="style-toggle w-9 h-9 rounded-lg border border-outline-variant font-bold flex items-center justify-center">B</button>
+            <button id="prop-italic" type="button" class="style-toggle w-9 h-9 rounded-lg border border-outline-variant italic flex items-center justify-center">I</button>
+            <div class="h-6 w-px bg-outline-variant/50 mx-1"></div>
+            <button data-align="left" class="align-toggle w-9 h-9 rounded-lg border border-outline-variant flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">format_align_left</span></button>
+            <button data-align="center" class="align-toggle w-9 h-9 rounded-lg border border-outline-variant flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">format_align_center</span></button>
+            <button data-align="right" class="align-toggle w-9 h-9 rounded-lg border border-outline-variant flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">format_align_right</span></button>
+          </div>
+        </div>
+        <div id="image-props" class="space-y-3 hidden">
+          <p class="text-xs text-on-surface-variant">Drag to move, use the corner handle to resize, top handle to rotate.</p>
+        </div>
+        <div>
+          <label class="text-xs text-on-surface-variant block mb-1 mt-3">Rotation: <span id="prop-rotation-val">0</span>°</label>
+          <input id="prop-rotation" type="range" min="-180" max="180" value="0" class="w-full accent-primary">
+        </div>
+        <button id="btn-delete-element" type="button" class="mt-4 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-lg border border-error/40 text-error text-sm font-semibold hover:bg-error-container/40">
+          <span class="material-symbols-outlined text-[17px]">delete</span> Delete Element
+        </button>
+      </div>
+
+      <!-- PRICE SUMMARY -->
+      <div class="border-t border-outline-variant/30 pt-6">
+        <h3 class="text-xs font-bold uppercase tracking-wide text-on-surface-variant mb-3">Price Summary</h3>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between"><span class="text-on-surface-variant">Base product</span><span id="price-base" class="font-medium price">{{ product.base_price|peso }}</span></div>
+          <div class="flex justify-between"><span class="text-on-surface-variant">Customization</span><span id="price-custom" class="font-medium price">₱0</span></div>
+          <div class="flex justify-between"><span class="text-on-surface-variant">Quantity</span><span id="price-qty" class="font-medium">× 1</span></div>
+          <div class="flex justify-between pt-2 border-t border-outline-variant/30 text-base"><span class="font-bold text-on-surface">Total</span><span id="price-total" class="font-bold text-primary price">{{ product.base_price|peso }}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-primary text-on-primary px-5 py-3 rounded-lg shadow-lg text-sm font-medium opacity-0 pointer-events-none transition-opacity z-[100]"></div>
+
+<style>
+.tool-btn{ width:38px;height:38px;border-radius:0.5rem;border:1px solid #d0c4be;display:flex;align-items:center;justify-content:center;color:#4d4540;background:#fff; }
+.tool-btn:hover{ background:#F4EFEA; }
+.style-toggle.active, .align-toggle.active{ border-color:#2B2623; background:#F4EFEA; color:#2B2623; }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.CC_CONFIG = {
+    isLoggedIn: {{ 'true' if current_user else 'false' }},
+    loginUrl: "{{ url_for('auth.login') }}",
+    cartUrl: "{{ url_for('cart.view_cart') }}",
+    saveDesignUrl: "{{ url_for('customizer.save_design') }}",
+    addToCartUrl: "{{ url_for('cart.add_to_cart') }}",
+    uploadImageUrl: "{{ url_for('customizer.upload_image') }}",
+    product: {
+      id: {{ product.id }},
+      name: {{ product.name|tojson }},
+      basePrice: {{ product.base_price }},
+      mockupShape: {{ product.mockup_shape|tojson }},
+      hasBackSide: {{ 'true' if product.has_back_side else 'false' }}
+    },
+    initialColorHex: {{ (colors[0].hex if colors else '#E8DFD1')|tojson }},
+    initialColorName: {{ (colors[0].name if colors else '')|tojson }},
+    initialSize: {{ (sizes[0].name if sizes else '')|tojson }},
+    existingDesignId: {{ (design.id if design else 'null') }},
+    existingDesignName: {{ (design.name if design else '')|tojson }},
+    existingDesignData: {{ (design.design_data | safe) if design else 'null' }}
+  };
+</script>
+<script src="{{ url_for('static', filename='js/customizer.js') }}"></script>
+{% endblock %}

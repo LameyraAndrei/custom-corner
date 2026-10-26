@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Reports — Custom Corner Admin{% endblock %}
+{% block content %}
+<section class="w-full py-10">
+  <div class="max-w-[1320px] mx-auto px-5 lg:px-10 flex flex-col lg:flex-row gap-8">
+    {% include 'partials/admin_nav.html' %}
+    <div class="flex-1 min-w-0">
+      <h1 class="font-display text-2xl font-semibold text-primary tracking-tight mb-6">Reports</h1>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6">
+          <h2 class="font-semibold text-on-surface mb-4">Revenue by Category</h2>
+          {% if by_category %}
+          <table class="w-full text-sm">
+            <thead><tr class="text-left text-xs uppercase tracking-wide text-on-surface-variant border-b border-outline-variant/30">
+              <th class="py-2">Category</th><th class="py-2">Items Sold</th><th class="py-2 text-right">Revenue</th>
+            </tr></thead>
+            <tbody>
+              {% for row in by_category %}
+              <tr class="border-b border-outline-variant/20">
+                <td class="py-2">{{ row.category }}</td>
+                <td class="py-2">{{ row.items_sold }}</td>
+                <td class="py-2 text-right font-semibold price">{{ row.revenue|peso }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <p class="text-sm text-on-surface-variant py-6 text-center">No sales data yet.</p>
+          {% endif %}
+        </div>
+
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6">
+          <h2 class="font-semibold text-on-surface mb-4">Orders by Status</h2>
+          {% if by_status %}
+          <div class="space-y-2">
+            {% for row in by_status %}
+            <div class="flex items-center justify-between text-sm">
+              <span>{{ row.status }}</span>
+              <span class="font-bold">{{ row.c }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-sm text-on-surface-variant py-6 text-center">No orders yet.</p>
+          {% endif %}
+        </div>
+
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6 lg:col-span-2">
+          <h2 class="font-semibold text-on-surface mb-4">Monthly Revenue (Last 6 Months)</h2>
+          {% if monthly %}
+          <table class="w-full text-sm">
+            <thead><tr class="text-left text-xs uppercase tracking-wide text-on-surface-variant border-b border-outline-variant/30">
+              <th class="py-2">Month</th><th class="py-2">Orders</th><th class="py-2 text-right">Revenue</th>
+            </tr></thead>
+            <tbody>
+              {% for row in monthly %}
+              <tr class="border-b border-outline-variant/20">
+                <td class="py-2">{{ row.month }}</td>
+                <td class="py-2">{{ row.orders }}</td>
+                <td class="py-2 text-right font-semibold price">{{ row.revenue|peso }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <p class="text-sm text-on-surface-variant py-6 text-center">No revenue data yet.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

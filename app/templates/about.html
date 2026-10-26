@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}About Us — Custom Corner{% endblock %}
+{% block content %}
+<section class="w-full py-14">
+  <div class="max-w-[1000px] mx-auto px-5 lg:px-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <span class="text-secondary uppercase tracking-widest text-xs font-bold block mb-2">Our Story</span>
+        <h1 class="font-display text-4xl font-semibold text-primary tracking-tight mb-5">Make It Yours.</h1>
+        <p class="text-on-surface-variant leading-relaxed mb-4">
+          Custom Corner started as a technopreneurship project with a simple idea: personalized products
+          shouldn't require a graphic designer or a minimum order of a hundred pieces. Every customer
+          deserves an easy way to put their own name, message, or artwork on something they'll actually use.
+        </p>
+        <p class="text-on-surface-variant leading-relaxed mb-4">
+          Our interactive Design Studio lets you build your own product entirely online — add text, upload
+          images, and preview exactly how it will look before you order. From a single birthday mug to a
+          batch of event t-shirts, we keep it simple, transparent, and made just for you.
+        </p>
+        <p class="text-on-surface-variant leading-relaxed">
+          We're based in Metro Manila and proudly serve customers with fast local turnaround and honest,
+          upfront pricing in Philippine Peso.
+        </p>
+      </div>
+      <div class="rounded-xl overflow-hidden bg-surface-container-low">
+        <img src="{{ url_for('static', filename='images/founder.jpg') }}" alt="Custom Corner founder" class="w-full aspect-square object-cover">
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16">
+      <div class="text-center p-6 bg-surface-container-low rounded-xl">
+        <span class="font-display text-3xl font-semibold text-primary block mb-1">2,400+</span>
+        <span class="text-sm text-on-surface-variant">Custom orders fulfilled</span>
+      </div>
+      <div class="text-center p-6 bg-surface-container-low rounded-xl">
+        <span class="font-display text-3xl font-semibold text-primary block mb-1">4.9 / 5</span>
+        <span class="text-sm text-on-surface-variant">Average customer rating</span>
+      </div>
+      <div class="text-center p-6 bg-surface-container-low rounded-xl">
+        <span class="font-display text-3xl font-semibold text-primary block mb-1">1 Piece</span>
+        <span class="text-sm text-on-surface-variant">Minimum order quantity</span>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Track Order {{ order.order_number }} — Custom Corner{% endblock %}
+{% block content %}
+<section class="w-full py-10">
+  <div class="max-w-[900px] mx-auto px-5 lg:px-10">
+    <a href="{{ url_for('account.orders') }}" class="text-sm font-semibold text-on-surface-variant hover:text-primary flex items-center gap-1 mb-6">
+      <span class="material-symbols-outlined text-[18px]">arrow_back</span> My Orders
+    </a>
+    <div class="flex items-center justify-between flex-wrap gap-3 mb-8">
+      <div>
+        <h1 class="font-display text-2xl font-semibold text-primary tracking-tight">Order {{ order.order_number }}</h1>
+        <p class="text-sm text-on-surface-variant">Placed on {{ order.created_at }}</p>
+      </div>
+      <span class="px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide
+        {% if is_cancelled %}bg-error-container text-on-error-container{% else %}bg-tertiary-container text-on-tertiary-container{% endif %}">
+        {{ order.status }}
+      </span>
+    </div>
+
+    {% if is_cancelled %}
+    <div class="bg-error-container text-on-error-container rounded-lg p-5 mb-8 flex items-center gap-3">
+      <span class="material-symbols-outlined">cancel</span>
+      <p class="text-sm font-medium">This order has been cancelled. Please contact support if you have questions.</p>
+    </div>
+    {% else %}
+    <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-8 mb-8 overflow-x-auto">
+      <div class="flex items-center min-w-[640px]">
+        {% for status, label in steps %}
+        <div class="flex-1 flex flex-col items-center relative">
+          <div class="step-dot {{ 'done' if loop.index0 < current_step else ('current' if loop.index0 == current_step else '') }}"></div>
+          <span class="text-[11px] font-semibold mt-2.5 text-center {{ 'text-primary' if loop.index0 <= current_step else 'text-on-surface-variant' }}">{{ label }}</span>
+        </div>
+        {% if not loop.last %}
+        <div class="step-line {{ 'done' if loop.index0 < current_step }}" style="margin-top:-22px;"></div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6">
+      <h2 class="font-semibold text-on-surface mb-4">Order Items</h2>
+      {% for item in items %}
+      <div class="flex items-center gap-3 py-3 {% if not loop.last %}border-b border-outline-variant/30{% endif %}">
+        <div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+          {% if item.preview_image %}<img src="{{ url_for('static', filename=item.preview_image) }}" class="w-full h-full object-cover">{% endif %}
+        </div>
+        <div class="flex-1">
+          <p class="font-medium text-sm">{{ item.product_name }}</p>
+          <p class="text-xs text-on-surface-variant">{{ item.color }} {% if item.size %}&middot; {{ item.size }}{% endif %} &middot; Qty {{ item.quantity }}</p>
+        </div>
+        <span class="font-semibold text-sm price">{{ ((item.unit_price + item.customization_fee) * item.quantity)|peso }}</span>
+      </div>
+      {% endfor %}
+      <div class="pt-4 flex justify-between font-bold text-base border-t border-outline-variant/30 mt-2">
+        <span>Total</span><span class="text-primary price">{{ order.total|peso }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

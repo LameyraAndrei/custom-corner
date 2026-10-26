@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Custom Designs — Custom Corner Admin{% endblock %}
+{% block content %}
+<section class="w-full py-10">
+  <div class="max-w-[1320px] mx-auto px-5 lg:px-10 flex flex-col lg:flex-row gap-8">
+    {% include 'partials/admin_nav.html' %}
+    <div class="flex-1 min-w-0">
+      <h1 class="font-display text-2xl font-semibold text-primary tracking-tight mb-2">Custom Designs</h1>
+      <p class="text-sm text-on-surface-variant mb-6">Review customer-created designs before production.</p>
+
+      {% if designs %}
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {% for d in designs %}
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg overflow-hidden">
+          <div class="aspect-square bg-surface-container">
+            {% if d.preview_image %}<img src="{{ url_for('static', filename=d.preview_image) }}" class="w-full h-full object-cover">
+            {% else %}<div class="w-full h-full flex items-center justify-center text-outline"><span class="material-symbols-outlined text-3xl">image</span></div>{% endif %}
+          </div>
+          <div class="p-3">
+            <p class="text-sm font-semibold truncate">{{ d.name }}</p>
+            <p class="text-xs text-on-surface-variant">{{ d.product_name }}</p>
+            <p class="text-xs text-on-surface-variant">by {{ d.customer_name }}</p>
+            <p class="text-[10px] text-outline mt-1">{{ d.updated_at }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="flex flex-col items-center justify-center text-center py-20 bg-surface-container-low rounded-xl">
+        <span class="material-symbols-outlined text-5xl text-outline mb-3">palette</span>
+        <p class="text-sm text-on-surface-variant">No customer designs yet.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

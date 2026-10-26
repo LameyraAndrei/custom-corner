@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}Your Cart — Custom Corner{% endblock %}
+{% block content %}
+<section class="w-full py-10">
+  <div class="max-w-[1100px] mx-auto px-5 lg:px-10">
+    <h1 class="font-display text-3xl font-semibold text-primary tracking-tight mb-8">Your Cart</h1>
+
+    {% if items %}
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+      <div id="cart-items" class="space-y-4">
+        {% for i in items %}
+        <div class="cart-item flex gap-4 bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-4" data-item-id="{{ i.id }}" data-unit-price="{{ i.unit_price }}" data-fee="{{ i.customization_fee }}">
+          <div class="w-24 h-24 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+            {% if i.preview_image %}
+            <img src="{{ url_for('static', filename=i.preview_image) }}" alt="{{ i.product_name }}" class="w-full h-full object-cover">
+            {% else %}
+            <img src="{{ url_for('static', filename='images/' + i.product_image) }}" alt="{{ i.product_name }}" class="w-full h-full object-cover">
+            {% endif %}
+          </div>
+          <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+            <div>
+              <a href="{{ url_for('shop.product_detail', slug=i.product_slug) }}" class="font-semibold text-on-surface hover:text-primary">{{ i.product_name }}</a>
+              <p class="text-xs text-on-surface-variant mt-1">
+                {% if i.color %}Color: {{ i.color }}{% endif %}{% if i.size %} &middot; Size: {{ i.size }}{% endif %}
+                {% if i.design_id %} &middot; <span class="text-secondary font-medium">Custom Design</span>{% endif %}
+              </p>
+              {% if i.design_id %}
+              <a href="{{ url_for('customizer.studio', slug=i.product_slug, design_id=i.design_id) }}" class="text-xs text-primary hover:underline font-semibold mt-1 inline-block">Edit customization</a>
+              {% endif %}
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="inline-flex items-center border border-outline-variant rounded-lg">
+                <button class="qty-minus w-8 h-8 flex items-center justify-center hover:bg-surface-container-low">−</button>
+                <span class="qty-value w-8 text-center text-sm font-medium">{{ i.quantity }}</span>
+                <button class="qty-plus w-8 h-8 flex items-center justify-center hover:bg-surface-container-low">+</button>
+              </div>
+              <span class="line-total font-bold text-primary price w-24 text-right">{{ ((i.unit_price + i.customization_fee) * i.quantity)|peso }}</span>
+              <button class="remove-item text-on-surface-variant hover:text-error" title="Remove">
+                <span class="material-symbols-outlined text-[20px]">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="bg-surface-container-low rounded-lg p-6 h-fit sticky top-28">
+        <h2 class="font-semibold text-lg text-primary mb-4">Order Summary</h2>
+        <div class="flex justify-between text-sm mb-2"><span class="text-on-surface-variant">Subtotal</span><span id="cart-subtotal" class="font-medium price">{{ subtotal|peso }}</span></div>
+        <p class="text-xs text-on-surface-variant mb-4">Delivery fee calculated at checkout.</p>
+        <a href="{{ url_for('orders.checkout') }}" class="block text-center bg-primary text-on-primary font-semibold py-3 rounded-lg hover:bg-primary-container transition-colors">Proceed to Checkout</a>
+        <a href="{{ url_for('shop.catalog') }}" class="block text-center text-sm text-on-surface-variant hover:text-primary mt-3">Continue Shopping</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="flex flex-col items-center justify-center text-center py-24 bg-surface-container-low rounded-xl">
+      <span class="material-symbols-outlined text-6xl text-outline mb-4">shopping_bag</span>
+      <h3 class="font-display text-2xl font-semibold text-on-surface mb-2">Your cart is empty</h3>
+      <p class="text-sm text-on-surface-variant mb-6">Looks like you haven't added anything yet.</p>
+      <a href="{{ url_for('shop.catalog') }}" class="px-6 py-3 rounded-lg bg-primary text-on-primary font-semibold hover:bg-primary-container transition-colors">Browse Products</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function pesoFormat(n) {
+  n = Math.round(n * 100) / 100;
+  const s = n.toLocaleString('en-PH', { minimumFractionDigits: n % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 });
+  return '₱' + s;
+}
+function recalcSubtotal() {
+  let subtotal = 0;
+  document.querySelectorAll('.cart-item').forEach(item => {
+    subtotal += parseFloat(item.dataset.unitPrice) * 1 + parseFloat(item.dataset.fee) * 1;
+  });
+}
+function updateSubtotalFromLines() {
+  let subtotal = 0;
+  document.querySelectorAll('.cart-item').forEach(item => {
+    const lineText = item.querySelector('.line-total').textContent.replace(/[^\d.]/g, '');
+    subtotal += parseFloat(lineText || '0');
+  });
+  document.getElementById('cart-subtotal').textContent = pesoFormat(subtotal);
+}
+
+document.querySelectorAll('.cart-item').forEach(item => {
+  const itemId = item.dataset.itemId;
+  const unitPrice = parseFloat(item.dataset.unitPrice);
+  const fee = parseFloat(item.dataset.fee);
+  const qtyValue = item.querySelector('.qty-value');
+  const lineTotal = item.querySelector('.line-total');
+
+  function setQty(q) {
+    q = Math.max(1, Math.min(99, q));
+    fetch(`/api/cart/${itemId}`, {
+      method: 'PATCH', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({quantity: q})
+    }).then(r => r.json()).then(data => {
+      if (data.ok) {
+        qtyValue.textContent = data.quantity;
+        lineTotal.textContent = pesoFormat(data.line_total);
+        updateSubtotalFromLines();
+      }
+    });
+  }
+
+  item.querySelector('.qty-minus').addEventListener('click', () => setQty(parseInt(qtyValue.textContent) - 1));
+  item.querySelector('.qty-plus').addEventListener('click', () => setQty(parseInt(qtyValue.textContent) + 1));
+  item.querySelector('.remove-item').addEventListener('click', () => {
+    if (!confirm('Remove this item from your cart?')) return;
+    fetch(`/api/cart/${itemId}`, {method: 'DELETE'}).then(r => r.json()).then(data => {
+      if (data.ok) { item.remove(); updateSubtotalFromLines();
+        if (document.querySelectorAll('.cart-item').length === 0) window.location.reload(); }
+    });
+  });
+});
+</script>
+{% endblock %}

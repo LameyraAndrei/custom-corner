@@ -1,0 +1,42 @@
+<footer class="w-full bg-primary text-on-primary mt-auto">
+  <div class="max-w-[1320px] mx-auto px-5 lg:px-10 py-14 grid grid-cols-2 md:grid-cols-4 gap-10">
+    <div class="col-span-2 md:col-span-1">
+      <div class="flex items-center gap-2 mb-3">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" class="h-7 w-auto opacity-90" alt="Custom Corner">
+      </div>
+      <p class="text-sm text-on-primary/70 leading-relaxed">Personalized apparel, ceramics, totes, and keepsakes — designed by you, crafted in Manila.</p>
+    </div>
+    <div>
+      <h4 class="text-xs font-bold uppercase tracking-widest text-on-primary/60 mb-3">Shop</h4>
+      <ul class="space-y-2 text-sm text-on-primary/85">
+        <li><a class="hover:underline" href="{{ url_for('shop.catalog') }}">All Products</a></li>
+        <li><a class="hover:underline" href="{{ url_for('shop.catalog', category='t-shirts') }}">T-Shirts</a></li>
+        <li><a class="hover:underline" href="{{ url_for('shop.catalog', category='mugs') }}">Mugs</a></li>
+        <li><a class="hover:underline" href="{{ url_for('shop.catalog', category='tote-bags') }}">Tote Bags</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-bold uppercase tracking-widest text-on-primary/60 mb-3">Company</h4>
+      <ul class="space-y-2 text-sm text-on-primary/85">
+        <li><a class="hover:underline" href="{{ url_for('main.about') }}">About Us</a></li>
+        <li><a class="hover:underline" href="{{ url_for('main.how_it_works') }}">How It Works</a></li>
+        <li><a class="hover:underline" href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-xs font-bold uppercase tracking-widest text-on-primary/60 mb-3">Account</h4>
+      <ul class="space-y-2 text-sm text-on-primary/85">
+        {% if current_user %}
+        <li><a class="hover:underline" href="{{ url_for('account.orders') }}">Order Tracking</a></li>
+        <li><a class="hover:underline" href="{{ url_for('account.designs') }}">Saved Designs</a></li>
+        {% else %}
+        <li><a class="hover:underline" href="{{ url_for('auth.login') }}">Log In</a></li>
+        <li><a class="hover:underline" href="{{ url_for('auth.register') }}">Create Account</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-white/10 py-5 text-center text-xs text-on-primary/60">
+    &copy; {{ 2026 }} Custom Corner. A student technopreneurship project. "Make It Yours."
+  </div>
+</footer>

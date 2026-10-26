@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Log In — Custom Corner{% endblock %}
+{% block content %}
+<section class="w-full py-16 flex items-center justify-center flex-1">
+  <div class="w-full max-w-md px-5">
+    <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-8 shadow-sm">
+      <h1 class="font-display text-2xl font-semibold text-primary tracking-tight mb-1 text-center">Welcome Back</h1>
+      <p class="text-sm text-on-surface-variant text-center mb-6">Log in to continue customizing.</p>
+      <form method="post" class="space-y-4">
+        <input type="hidden" name="next" value="{{ next or '' }}">
+        <div>
+          <label class="text-xs text-on-surface-variant block mb-1">Email</label>
+          <input type="email" name="email" required value="{{ email }}" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-on-surface-variant block mb-1">Password</label>
+          <input type="password" name="password" required class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+        </div>
+        <button type="submit" class="w-full bg-primary text-on-primary font-semibold py-3 rounded-lg hover:bg-primary-container transition-colors">Log In</button>
+      </form>
+      <p class="text-center text-sm text-on-surface-variant mt-6">Don't have an account? <a href="{{ url_for('auth.register') }}" class="text-primary font-semibold hover:underline">Sign up</a></p>
+      <div class="mt-6 pt-4 border-t border-outline-variant/30 text-xs text-on-surface-variant text-center">
+        Demo customer account: <span class="font-mono">maria@example.com</span> / <span class="font-mono">password123</span>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

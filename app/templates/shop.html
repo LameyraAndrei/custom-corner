@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Shop — Custom Corner{% endblock %}
+{% block content %}
+<section class="w-full bg-surface-container-low border-b border-outline-variant/30 py-8">
+  <div class="max-w-[1320px] mx-auto px-5 lg:px-10">
+    <span class="text-secondary uppercase tracking-widest text-xs font-bold block mb-1">Catalog</span>
+    <h1 class="font-display text-3xl lg:text-4xl font-semibold text-primary tracking-tight">Shop All Products</h1>
+  </div>
+</section>
+
+<section class="w-full py-10">
+  <div class="max-w-[1320px] mx-auto px-5 lg:px-10 grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8">
+
+    <aside class="lg:sticky lg:top-28 self-start">
+      <form method="get" action="{{ url_for('shop.catalog') }}" class="space-y-6">
+        <div class="md:hidden">
+          <label class="text-xs font-bold uppercase tracking-wide text-on-surface-variant mb-2 block">Search</label>
+          <input type="text" name="q" value="{{ q }}" placeholder="Search products..." class="w-full px-3 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-sm focus:border-primary focus:outline-none">
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wide text-on-surface-variant mb-2 block">Category</label>
+          <div class="space-y-1">
+            <label class="flex items-center gap-2 text-sm py-1 cursor-pointer {{ 'font-bold text-primary' if not active_category else 'text-on-surface-variant' }}">
+              <input type="radio" name="category" value="" class="accent-primary" {{ 'checked' if not active_category }} onchange="this.form.submit()"> All Categories
+            </label>
+            {% for c in categories %}
+            <label class="flex items-center gap-2 text-sm py-1 cursor-pointer {{ 'font-bold text-primary' if active_category == c.slug else 'text-on-surface-variant' }}">
+              <input type="radio" name="category" value="{{ c.slug }}" class="accent-primary" {{ 'checked' if active_category == c.slug }} onchange="this.form.submit()"> {{ c.name }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wide text-on-surface-variant mb-2 block">Price Range (₱)</label>
+          <div class="flex items-center gap-2">
+            <input type="number" name="min_price" value="{{ min_price if min_price is not none else '' }}" placeholder="Min" class="w-1/2 px-2.5 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest text-sm focus:border-primary focus:outline-none">
+            <span class="text-outline">–</span>
+            <input type="number" name="max_price" value="{{ max_price if max_price is not none else '' }}" placeholder="Max" class="w-1/2 px-2.5 py-2 rounded-lg border border-outline-variant bg-surface-container-lowest text-sm focus:border-primary focus:outline-none">
+          </div>
+        </div>
+        <input type="hidden" name="q" value="{{ q }}" class="hidden md:block">
+        <input type="hidden" name="sort" value="{{ sort }}">
+        <button type="submit" class="w-full py-2.5 rounded-lg bg-primary text-on-primary text-sm font-semibold hover:bg-primary-container transition-colors">Apply Filters</button>
+        {% if q or active_category or min_price or max_price %}
+        <a href="{{ url_for('shop.catalog') }}" class="block text-center text-xs text-on-surface-variant hover:text-primary underline">Clear all filters</a>
+        {% endif %}
+      </form>
+    </aside>
+
+    <div>
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <p class="text-sm text-on-surface-variant">
+          {{ products|length }} product{{ 's' if products|length != 1 }} found
+          {% if q %} for "<span class="font-semibold text-on-surface">{{ q }}</span>"{% endif %}
+        </p>
+        <form method="get" action="{{ url_for('shop.catalog') }}" class="flex items-center gap-2">
+          <input type="hidden" name="q" value="{{ q }}">
+          <input type="hidden" name="category" value="{{ active_category }}">
+          <label class="text-xs text-on-surface-variant">Sort by</label>
+          <select name="sort" onchange="this.form.submit()" class="text-sm border border-outline-variant rounded-lg px-2.5 py-1.5 bg-surface-container-lowest focus:outline-none">
+            <option value="featured" {{ 'selected' if sort=='featured' }}>Featured</option>
+            <option value="price_low" {{ 'selected' if sort=='price_low' }}>Price: Low to High</option>
+            <option value="price_high" {{ 'selected' if sort=='price_high' }}>Price: High to Low</option>
+            <option value="name" {{ 'selected' if sort=='name' }}>Name</option>
+            <option value="newest" {{ 'selected' if sort=='newest' }}>Newest</option>
+          </select>
+        </form>
+      </div>
+
+      {% if products %}
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-5 lg:gap-6">
+        {% for p in products %}
+        {% include 'partials/product_card.html' %}
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="flex flex-col items-center justify-center text-center py-20 bg-surface-container-low rounded-xl">
+        <span class="material-symbols-outlined text-5xl text-outline mb-3">search_off</span>
+        <h3 class="font-semibold text-lg text-on-surface mb-1">No products found</h3>
+        <p class="text-sm text-on-surface-variant mb-4">Try adjusting your search or filters.</p>
+        <a href="{{ url_for('shop.catalog') }}" class="text-sm font-semibold text-primary hover:underline">Clear filters</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

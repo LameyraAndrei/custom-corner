@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% block title %}Checkout — Custom Corner{% endblock %}
+{% block content %}
+<section class="w-full py-10">
+  <div class="max-w-[1100px] mx-auto px-5 lg:px-10">
+    <h1 class="font-display text-3xl font-semibold text-primary tracking-tight mb-8">Checkout</h1>
+
+    <form method="post" class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
+      <div class="space-y-8">
+
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6">
+          <h2 class="font-semibold text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[20px]">person</span> Customer Information</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+              <label class="text-xs text-on-surface-variant block mb-1">Full Name *</label>
+              <input name="full_name" required value="{{ form.full_name or '' }}" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+            </div>
+            <div>
+              <label class="text-xs text-on-surface-variant block mb-1">Email *</label>
+              <input type="email" name="email" required value="{{ form.email or '' }}" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+            </div>
+            <div>
+              <label class="text-xs text-on-surface-variant block mb-1">Phone Number *</label>
+              <input name="phone" required value="{{ form.phone or '' }}" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6">
+          <h2 class="font-semibold text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[20px]">local_shipping</span> Delivery Address</h2>
+          {% if addresses %}
+          <div class="mb-4">
+            <label class="text-xs text-on-surface-variant block mb-1">Use a saved address</label>
+            <select id="saved-address" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:outline-none">
+              <option value="">-- Enter manually below --</option>
+              {% for a in addresses %}
+              <option value='{{ a.address_line }}|{{ a.city }}|{{ a.province }}|{{ a.postal_code or "" }}'>{{ a.label }} — {{ a.address_line }}, {{ a.city }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+              <label class="text-xs text-on-surface-variant block mb-1">Address *</label>
+              <input id="address_line" name="address_line" required value="{{ form.address_line or '' }}" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+            </div>
+            <div>
+              <label class="text-xs text-on-surface-variant block mb-1">City *</label>
+              <input id="city" name="city" required value="{{ form.city or '' }}" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+            </div>
+            <div>
+              <label class="text-xs text-on-surface-variant block mb-1">Province *</label>
+              <input id="province" name="province" required value="{{ form.province or '' }}" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+            </div>
+            <div>
+              <label class="text-xs text-on-surface-variant block mb-1">Postal Code</label>
+              <input id="postal_code" name="postal_code" value="{{ form.postal_code or '' }}" class="w-full px-3 py-2.5 rounded-lg border border-outline-variant text-sm focus:border-primary focus:outline-none">
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <label class="text-xs text-on-surface-variant block mb-2">Delivery Option</label>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="flex items-center gap-2 border border-outline-variant rounded-lg px-4 py-3 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-surface-container-low">
+                <input type="radio" name="delivery_option" value="Standard" checked class="accent-primary"> <span class="text-sm">Standard <span class="block text-xs text-on-surface-variant">₱80 &middot; 3-5 days</span></span>
+              </label>
+              <label class="flex items-center gap-2 border border-outline-variant rounded-lg px-4 py-3 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-surface-container-low">
+                <input type="radio" name="delivery_option" value="Express" class="accent-primary"> <span class="text-sm">Express <span class="block text-xs text-on-surface-variant">₱180 &middot; 1-2 days</span></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6">
+          <h2 class="font-semibold text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[20px]">payments</span> Payment Method</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {% for method in ['GCash', 'Maya', 'Cash on Delivery', 'Online Payment'] %}
+            <label class="flex flex-col items-center justify-center gap-1.5 border border-outline-variant rounded-lg px-3 py-4 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-surface-container-low text-center">
+              <input type="radio" name="payment_method" value="{{ method }}" {{ 'checked' if loop.first }} class="accent-primary">
+              <span class="text-xs font-medium">{{ method }}</span>
+            </label>
+            {% endfor %}
+          </div>
+          <p class="text-xs text-on-surface-variant mt-3">Payment is simulated for this school project — no real transaction will be processed.</p>
+        </div>
+      </div>
+
+      <div class="bg-surface-container-low rounded-lg p-6 h-fit sticky top-28">
+        <h2 class="font-semibold text-lg text-primary mb-4">Order Summary</h2>
+        <div class="space-y-3 max-h-64 overflow-y-auto pr-1 mb-4">
+          {% for i in items %}
+          <div class="flex items-center gap-3 text-sm">
+            <div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container-lowest flex-shrink-0">
+              {% if i.preview_image %}
+              <img src="{{ url_for('static', filename=i.preview_image) }}" class="w-full h-full object-cover">
+              {% else %}
+              <img src="{{ url_for('static', filename='images/' + i.product_image) }}" class="w-full h-full object-cover">
+              {% endif %}
+            </div>
+            <div class="flex-1">
+              <p class="font-medium leading-tight">{{ i.product_name }}</p>
+              <p class="text-xs text-on-surface-variant">Qty {{ i.quantity }}</p>
+            </div>
+            <span class="font-semibold price">{{ ((i.unit_price + i.customization_fee) * i.quantity)|peso }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="border-t border-outline-variant/30 pt-3 space-y-2 text-sm">
+          <div class="flex justify-between"><span class="text-on-surface-variant">Subtotal</span><span class="font-medium price">{{ subtotal|peso }}</span></div>
+          <div class="flex justify-between"><span class="text-on-surface-variant">Delivery Fee</span><span id="delivery-fee-display" class="font-medium price">{{ 80|peso if subtotal < 1500 else '₱0 (Free)' }}</span></div>
+          <div class="flex justify-between pt-2 border-t border-outline-variant/30 text-base"><span class="font-bold">Total</span><span id="total-display" class="font-bold text-primary price">{{ (subtotal + (0 if subtotal >= 1500 else 80))|peso }}</span></div>
+        </div>
+        <button type="submit" class="w-full mt-5 bg-primary text-on-primary font-semibold py-3 rounded-lg hover:bg-primary-container transition-colors">Place Order</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const subtotal = {{ subtotal }};
+const FREE_THRESHOLD = 1500;
+const FEES = {Standard: 80, Express: 180};
+function pesoFormat(n) { return '₱' + Math.round(n).toLocaleString('en-PH'); }
+function updateTotals() {
+  const opt = document.querySelector('input[name="delivery_option"]:checked').value;
+  const fee = subtotal >= FREE_THRESHOLD ? 0 : FEES[opt];
+  document.getElementById('delivery-fee-display').textContent = fee === 0 ? '₱0 (Free)' : pesoFormat(fee);
+  document.getElementById('total-display').textContent = pesoFormat(subtotal + fee);
+}
+document.querySelectorAll('input[name="delivery_option"]').forEach(r => r.addEventListener('change', updateTotals));
+
+const savedAddr = document.getElementById('saved-address');
+if (savedAddr) {
+  savedAddr.addEventListener('change', () => {
+    if (!savedAddr.value) return;
+    const [line, city, province, postal] = savedAddr.value.split('|');
+    document.getElementById('address_line').value = line;
+    document.getElementById('city').value = city;
+    document.getElementById('province').value = province;
+    document.getElementById('postal_code').value = postal;
+  });
+}
+</script>
+{% endblock %}

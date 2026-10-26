@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — Custom Corner{% endblock %}
+{% block content %}
+<section class="w-full py-10">
+  <div class="max-w-[1320px] mx-auto px-5 lg:px-10 flex flex-col lg:flex-row gap-8">
+    {% include 'partials/admin_nav.html' %}
+    <div class="flex-1 min-w-0">
+      <h1 class="font-display text-3xl font-semibold text-primary tracking-tight mb-1">Admin Dashboard</h1>
+      <p class="text-on-surface-variant mb-8">An overview of Custom Corner's performance.</p>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-5">
+          <span class="material-symbols-outlined text-secondary text-[22px]">receipt_long</span>
+          <p class="text-2xl font-bold text-primary mt-2">{{ total_orders }}</p>
+          <p class="text-xs text-on-surface-variant">Total Orders</p>
+        </div>
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-5">
+          <span class="material-symbols-outlined text-tertiary text-[22px]">payments</span>
+          <p class="text-2xl font-bold text-primary mt-2 price">{{ revenue|peso }}</p>
+          <p class="text-xs text-on-surface-variant">Total Revenue</p>
+        </div>
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-5">
+          <span class="material-symbols-outlined text-secondary text-[22px]">hourglass_top</span>
+          <p class="text-2xl font-bold text-primary mt-2">{{ pending_orders }}</p>
+          <p class="text-xs text-on-surface-variant">Pending Orders</p>
+        </div>
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-5">
+          <span class="material-symbols-outlined text-tertiary text-[22px]">inventory_2</span>
+          <p class="text-2xl font-bold text-primary mt-2">{{ products_sold }}</p>
+          <p class="text-xs text-on-surface-variant">Products Sold</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold text-on-surface">Recent Orders</h2>
+            <a href="{{ url_for('admin.orders') }}" class="text-xs font-semibold text-primary hover:underline">View all</a>
+          </div>
+          {% if recent_orders %}
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead><tr class="text-left text-xs uppercase tracking-wide text-on-surface-variant border-b border-outline-variant/30">
+                <th class="py-2 pr-3">Order</th><th class="py-2 pr-3">Customer</th><th class="py-2 pr-3">Amount</th><th class="py-2 pr-3">Status</th>
+              </tr></thead>
+              <tbody>
+                {% for o in recent_orders %}
+                <tr class="border-b border-outline-variant/20">
+                  <td class="py-2.5 pr-3"><a href="{{ url_for('admin.order_detail', order_id=o.id) }}" class="text-primary font-mono text-xs hover:underline">{{ o.order_number }}</a></td>
+                  <td class="py-2.5 pr-3">{{ o.customer_name }}</td>
+                  <td class="py-2.5 pr-3 font-semibold price">{{ o.total|peso }}</td>
+                  <td class="py-2.5 pr-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-secondary-container text-on-secondary-container">{{ o.status }}</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p class="text-sm text-on-surface-variant py-6 text-center">No orders yet.</p>
+          {% endif %}
+        </div>
+
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-6">
+          <h2 class="font-semibold text-on-surface mb-4">Low Stock Alerts</h2>
+          {% if low_stock %}
+          <div class="space-y-3">
+            {% for p in low_stock %}
+            <div class="flex items-center justify-between text-sm">
+              <span>{{ p.name }}</span>
+              <span class="font-bold {{ 'text-error' if p.stock == 0 else 'text-secondary' }}">{{ p.stock }} left</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-sm text-on-surface-variant py-6 text-center">All stock levels healthy.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

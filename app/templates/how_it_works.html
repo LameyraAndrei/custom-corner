@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}How It Works — Custom Corner{% endblock %}
+{% block content %}
+<section class="w-full py-14">
+  <div class="max-w-[900px] mx-auto px-5 lg:px-10 text-center mb-12">
+    <span class="text-secondary uppercase tracking-widest text-xs font-bold block mb-2">Simple Process</span>
+    <h1 class="font-display text-4xl font-semibold text-primary tracking-tight">How It Works</h1>
+    <p class="text-on-surface-variant mt-3">From blank canvas to your doorstep in four simple steps.</p>
+  </div>
+  <div class="max-w-[1000px] mx-auto px-5 lg:px-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+    {% set steps = [
+      ('inventory_2','01','Choose a Product','Browse our catalog of t-shirts, mugs, tote bags, keychains, stickers, and phone cases. Filter by category and price to find your perfect blank canvas.'),
+      ('palette','02','Customize Your Design','Use our live Design Studio to add text and upload images. Change fonts, colors, sizes, and rotation, then move everything exactly where you want it.'),
+      ('visibility','03','Preview Your Creation','Watch your design appear on the product in real time. What you see in the studio is exactly what gets produced.'),
+      ('local_shipping','04','Place Your Order','Add to cart, checkout with your delivery details, and track your order from confirmation to your doorstep.')
+    ] %}
+    {% for icon, num, title, desc in steps %}
+    <div class="bg-surface-container-low rounded-xl p-7 flex flex-col gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center"><span class="material-symbols-outlined text-primary text-[24px]">{{ icon }}</span></div>
+        <span class="font-display text-3xl font-semibold text-outline-variant">{{ num }}</span>
+      </div>
+      <h3 class="font-semibold text-lg text-primary">{{ title }}</h3>
+      <p class="text-sm text-on-surface-variant leading-relaxed">{{ desc }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="text-center mt-12">
+    <a href="{{ url_for('shop.catalog') }}" class="inline-flex items-center justify-center bg-primary text-on-primary text-sm font-semibold px-7 py-3.5 rounded-lg hover:bg-primary-container transition-all">
+      Start Designing Now <span class="material-symbols-outlined ml-2 text-[18px]">arrow_forward</span>
+    </a>
+  </div>
+</section>
+{% endblock %}

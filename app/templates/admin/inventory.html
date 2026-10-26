@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Inventory — Custom Corner Admin{% endblock %}
+{% block content %}
+<section class="w-full py-10">
+  <div class="max-w-[1320px] mx-auto px-5 lg:px-10 flex flex-col lg:flex-row gap-8">
+    {% include 'partials/admin_nav.html' %}
+    <div class="flex-1 min-w-0">
+      <h1 class="font-display text-2xl font-semibold text-primary tracking-tight mb-6">Inventory</h1>
+      <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-lg overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="text-left text-xs uppercase tracking-wide text-on-surface-variant border-b border-outline-variant/30">
+            <th class="py-3 px-4">Product</th><th class="py-3 px-4">Category</th><th class="py-3 px-4">Current Stock</th><th class="py-3 px-4">Update</th>
+          </tr></thead>
+          <tbody>
+            {% for p in products %}
+            <tr class="border-b border-outline-variant/20">
+              <td class="py-3 px-4 font-medium">{{ p.name }}</td>
+              <td class="py-3 px-4 text-on-surface-variant">{{ p.category_name }}</td>
+              <td class="py-3 px-4">
+                <span class="font-bold {{ 'text-error' if p.stock == 0 else ('text-secondary' if p.stock <= 20 else 'text-tertiary') }}">{{ p.stock }}</span>
+              </td>
+              <td class="py-3 px-4">
+                <form method="post" action="{{ url_for('admin.update_stock', product_id=p.id) }}" class="flex items-center gap-2">
+                  <input type="number" name="stock" value="{{ p.stock }}" min="0" class="w-20 px-2 py-1.5 rounded-lg border border-outline-variant text-sm focus:outline-none">
+                  <button type="submit" class="text-primary font-semibold text-xs hover:underline">Update</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

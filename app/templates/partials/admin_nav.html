@@ -1,0 +1,25 @@
+<aside class="lg:w-56 flex-shrink-0">
+  <div class="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
+    {% set tabs = [
+      ('admin.dashboard', 'dashboard', 'Dashboard'),
+      ('admin.orders', 'receipt_long', 'Orders'),
+      ('admin.products', 'inventory_2', 'Products'),
+      ('admin.designs', 'palette', 'Custom Designs'),
+      ('admin.customers', 'group', 'Customers'),
+      ('admin.inventory', 'warehouse', 'Inventory'),
+      ('admin.reports', 'bar_chart', 'Reports'),
+      ('admin.settings', 'settings', 'Settings'),
+    ] %}
+    {% set related = {
+      'admin.orders': ['admin.orders', 'admin.order_detail'],
+      'admin.products': ['admin.products', 'admin.edit_product', 'admin.new_product'],
+    } %}
+    {% for endpoint, icon, label in tabs %}
+    {% set is_active = request.endpoint == endpoint or (endpoint in related and request.endpoint in related[endpoint]) %}
+    <a href="{{ url_for(endpoint) }}" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-colors
+      {{ 'bg-primary text-on-primary' if is_active else 'text-on-surface-variant hover:bg-surface-container-low' }}">
+      <span class="material-symbols-outlined text-[19px]">{{ icon }}</span> {{ label }}
+    </a>
+    {% endfor %}
+  </div>
+</aside>

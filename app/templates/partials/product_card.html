@@ -1,0 +1,20 @@
+<div class="group bg-surface-container-lowest border border-outline-variant/40 rounded-lg overflow-hidden hover:shadow-md transition-all flex flex-col">
+  <a href="{{ url_for('shop.product_detail', slug=p.slug) }}" class="block relative bg-surface-container aspect-[4/5] overflow-hidden">
+    <img src="{{ url_for('static', filename='images/' + p.image) }}" alt="{{ p.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+    {% if p.stock <= 0 %}
+    <span class="absolute top-2.5 left-2.5 bg-error text-on-error text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">Out of Stock</span>
+    {% elif p.stock <= 20 %}
+    <span class="absolute top-2.5 left-2.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">Low Stock</span>
+    {% endif %}
+  </a>
+  <div class="p-3.5 flex flex-col gap-1.5 flex-1">
+    <span class="text-[10px] uppercase tracking-wider text-on-surface-variant">{{ p.category_name }}</span>
+    <a href="{{ url_for('shop.product_detail', slug=p.slug) }}" class="text-sm font-semibold text-on-surface hover:text-primary transition-colors leading-snug">{{ p.name }}</a>
+    <div class="flex items-center justify-between mt-1">
+      <span class="text-base font-bold text-primary price">{{ p.base_price|peso }}</span>
+      <a href="{{ url_for('customizer.studio', slug=p.slug) }}" class="text-[11px] font-bold uppercase tracking-wide text-secondary hover:text-primary transition-colors flex items-center gap-0.5">
+        Customize <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+      </a>
+    </div>
+  </div>
+</div>
